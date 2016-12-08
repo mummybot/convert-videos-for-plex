@@ -25,6 +25,7 @@ $ bash --version
 ```bash
 Command line options:
 -c          Codec to modify. Default is MPEG-4
+-d          Delete original.
 -f          Force overwriting of files if already exist in output destination.
 -o          Output folder directory path.
             Default is the same directory as the input file.
@@ -33,11 +34,15 @@ Command line options:
 -r          Run transcoding. Default is dry run.
 -s          Skip transcoding if there is already a matching file name in the output destination.
             Force takes precedence over skipping files and will overwrite them if both flags present.
+-w          Workspace directory path for processing. Set a local directory for faster transcoding over network.
 
 Examples:
     Dry run all movies in the Movies directory
         .convert-videos-for-plex.sh -p Movies
 
-    Transcode all movies in the current directory force overwriting matching files.
+    Transcode all movies in the current directory force overwriting matching .mp4 files.
         .convert-videos-for-plex.sh -fr
+
+    Transcode all network movies using Desktop as temp directory and delete original files.
+        .convert-videos-for-plex.sh -rd -p /Volumes/Public/Movies -w ~/Desktop
 ```
