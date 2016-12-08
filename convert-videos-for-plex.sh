@@ -32,10 +32,10 @@ echo "            Force takes precedence over skipping files and will overwrite 
 echo
 echo "Examples:"
 echo "    Dry run all movies in the Movies directory"
-echo "        .convert-video.sh -p Movies"
+echo "        .convert-videos-for-plex.sh -p Movies"
 echo
 echo "    Transcode all movies in the current directory force overwriting matching files."
-echo "        .convert-video.sh -fr"
+echo "        .convert-videos-for-plex.sh -fr"
 echo
 }
 
