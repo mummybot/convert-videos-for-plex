@@ -64,5 +64,7 @@ Examples:
 
 This is an automated script for modifying your home movie collection. Please be aware that things may go wrong or unexpected, my code could be awful or the software update gods decide to change the environment from when this was written. You may be holding your tongue out of the left side of your mouth while I'm holding mine out the right. **I bear no responsibility for any loss of priceless "first steps" videos, use this software at your own risk!** At least I hope this can be useful for someone else out there.
 
+## Credit
 
+Stole the core of HandBracke CLI usage from http://pastebin.com/9JnS23fK.
 

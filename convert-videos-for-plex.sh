@@ -92,8 +92,6 @@ done
 # Reset OPTIND
 shift $((OPTIND-1))
 
-# iterate through all avi/mkv/iso/img/mp4 files
-# for i in $path/*.avi $path/*.mkv $path/*.iso $path/*.img $path/*.mp4; do
 echo
 if [[ $run == true ]]; then
     echo -e "${BLUE}TRANSCODING${NC}"
@@ -102,8 +100,12 @@ else
 fi
 echo "----------------"
 
+# Make sure all user inputted paths have trailing slashes
 if [[ $path != */ ]]; then
     path=$path"/"
+fi
+if [[ $out != "" && $out != */ ]]; then
+    out=$out"/"
 fi
 if [[ $workspace != "" && $workspace != */ ]]; then
     workspace=$workspace"/"
@@ -115,6 +117,7 @@ for i in $path{,**/}*.*; do
     # Prevent processing on non-files
     if [[ $i !=  *\*.* ]]; then
 
+        # Loop over avi, mkv, iso, img and mp4 files only.
         if [[ $i == *.avi || $i == *.mkv || $i == *.iso || $i == *.img || $i == *.mp4 ]]; then
             ((count++))
             echo
@@ -127,10 +130,10 @@ for i in $path{,**/}*.*; do
                 # Set out directory if different from current
                 if [[ $out != "" ]]; then
                     name=${name##*/}
-                    name=$out/$name
+                    name=$out$name
                 fi
 
-                # if there is already an .mp4 file overwrite or skip it (continue)
+                # Check for existing .mp4; ask for overwrite or set force overwrite.
                 if [[ -e $name$ext ]]; then
                     if [[ $force == false ]]; then
                         if [[ $skip == false ]]; then
@@ -157,22 +160,24 @@ for i in $path{,**/}*.*; do
                 echo "Transcoding: "${i} to $name$ext
 
                 if [[ $run == true ]]; then
+                    # Set file locations: in situ or separate workspace
                     if [[ $workspace == "" ]]; then
                         $fileIn=$i
                         $fileOut="${name}"
                     else
-                        echo $i $workspace
                         cp "$i" "${workspace}"
                         fileIn=$workspace${i##*/}
                         fileOut=${fileIn%.*}
                     fi
 
+                    # Modified from http://pastebin.com/9JnS23fK
                     HandBrakeCLI -i "$fileIn" -o "$fileOut""_processing""${ext}" --preset="Universal" -O -N eng --native-dub -s "scan"
          
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
                         continue
                     else
+                        # Delete original files
                         if [[ $del == true ]]; then
                             rm -f $i
                         elif [[ $forceOverwrite == true ]]; then
@@ -182,6 +187,7 @@ for i in $path{,**/}*.*; do
                         mv "${fileOut}""_processing""${ext}" "${fileOut}""${ext}"
                         chmod 666 "${fileOut}""${ext}"
 
+                        # Move files from workspace back to original locations
                         if [[ $workspace != "" ]]; then
                             echo "Copying from workspace ""${fileOut}${ext}"" to ""$(dirname "${name}${ext}")"
                             cp "${fileOut}${ext}" "$(dirname "${name}${ext}")"
