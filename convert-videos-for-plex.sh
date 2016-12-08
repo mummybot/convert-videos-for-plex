@@ -102,6 +102,13 @@ else
 fi
 echo "----------------"
 
+if [[ $path != */ ]]; then
+    path=$path"/"
+fi
+if [[ $workspace != "" && $workspace != */ ]]; then
+    workspace=$workspace"/"
+fi
+
 for i in $path{,**/}*.*; do
     forceOverwrite=false
 
@@ -176,8 +183,8 @@ for i in $path{,**/}*.*; do
                         chmod 666 "${fileOut}""${ext}"
 
                         if [[ $workspace != "" ]]; then
-                            echo "Copying from workspace ""${fileOut}""${ext}"" to "$(dirname "${name}""${ext}")
-                            cp "${fileOut}""${ext}" $(dirname "${name}""${ext}")
+                            echo "Copying from workspace ""${fileOut}${ext}"" to ""$(dirname "${name}${ext}")"
+                            cp "${fileOut}${ext}" "$(dirname "${name}${ext}")"
                             rm -f "$fileIn"
                             rm -f "${fileOut}""${ext}"
                         fi
