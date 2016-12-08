@@ -144,7 +144,7 @@ for i in $path/{,**/}*.*; do
                             rm -f "${name}""${ext}"
                         fi
 
-                        mv "${name}""_processing.mp4" "${name}""${ext}"
+                        mv "${name}""_processing""${ext}" "${name}""${ext}"
                         chmod 666 "${name}""${ext}"
                         echo -e "${GREEN}Transcoded:${NC} "$name$ext
                     fi
