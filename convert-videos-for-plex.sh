@@ -5,7 +5,7 @@ function showHelp() {
 echo "----------------"
 echo "Convert videos for Plex Media Server"
 echo "----------------"
-echo "Converts all videos in nested folders to h264 and audio to aac using HandBrake with the Universal preset."
+echo "Converts all videos in nested folders to h264 and audio to aac using HandBrake with the Normal preset."
 echo "This saves Plex from having to transcode files which is CPU intensive."
 echo
 echo "Prerequisites"
@@ -27,7 +27,12 @@ echo "-o          Output folder directory path."
 echo "            Default is the same directory as the input file."
 echo "-p          The directory path of the movies to be tidied."
 echo "            Default is '.', the location of this script."
-echo "-r          Run transcoding. Default is dry run."
+echo "-q          Quality of HandBrake encoding preset. Default is 'Normal'."
+echo "            - Normal"
+echo "            - Universal"
+echo "            - High Profile"
+echo "            https://handbrake.fr/docs/en/latest/workflow/select-preset.html"
+echo "-r          Run transcoding. Exclude for dry run."
 echo "-s          Skip transcoding if there is already a matching file name in the output destination."
 echo "            Force takes precedence over skipping files and will overwrite them if both flags present."
 echo "-w          Workspace directory path for processing. Set a local directory for faster transcoding over network."
@@ -58,13 +63,14 @@ workspace=""
 fileIn=""
 fileOut=""
 count=0
+qualityPreset="Normal"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-while getopts "h?dfsrp:o:c:w:" opt; do
+while getopts "h?dfsrp:o:c:w:q:" opt; do
     case "$opt" in
     h|\?)
         showHelp
@@ -85,6 +91,8 @@ while getopts "h?dfsrp:o:c:w:" opt; do
     c)  codec="$OPTARG"
         ;;
     w)  workspace="$OPTARG"
+        ;;
+    q)  qualityPreset="$OPTARG"
         ;;
     esac
 done
@@ -172,7 +180,7 @@ for i in "${path}"{,**/}*.*; do
                     fi
 
                     # Modified from http://pastebin.com/9JnS23fK
-                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="Universal" -O -N eng --native-dub -s "scan"
+                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O -N eng --native-dub -s "scan"
          
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then

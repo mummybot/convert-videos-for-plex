@@ -1,5 +1,5 @@
 # Convert videos for Plex
-Converts all videos in nested folders to h264 and audio to aac using [HandBrakeCLI](https://handbrake.fr/docs/en/latest/cli/cli-options.html) with the Universal preset. This saves [Plex](https://www.plex.tv/) from having to [transcode files which is CPU intensive](https://support.plex.tv/hc/en-us/articles/200250377-Transcoding-Media) and not possible on certain underpowered NaSs (I'm looking at you [Seagate PersonalCloud](https://forums.plex.tv/discussion/151449/seagate-personal-cloud-support-for-plex)). This script is only tested on Max OSX Sierra.
+Converts all videos in nested folders to h264 and audio to aac using [HandBrakeCLI](https://handbrake.fr/docs/en/latest/cli/cli-options.html) with the Normal preset. This saves [Plex](https://www.plex.tv/) from having to [transcode files which is CPU intensive](https://support.plex.tv/hc/en-us/articles/200250377-Transcoding-Media) and not possible on certain underpowered NaSs (I'm looking at you [Seagate PersonalCloud](https://forums.plex.tv/discussion/151449/seagate-personal-cloud-support-for-plex)). This script is only tested on Max OSX Sierra.
 
 Shameless plugs for search error messages:
 * Plex browser web player: "This server is not powerful enough to convert video."
@@ -36,7 +36,12 @@ Command line options:
             Default is the same directory as the input file.
 -p          The directory path of the movies to be tidied.
             Default is '.', the location of this script.
--r          Run transcoding. Default is dry run.
+-q          Quality of HandBrake encoding preset. Default is 'Normal'.
+            - Normal
+            - Universal
+            - High Profile
+            https://handbrake.fr/docs/en/latest/workflow/select-preset.html
+-r          Run transcoding. Exclude for dry run.
 -s          Skip transcoding if there is already a matching file name in the output destination.
             Force takes precedence over skipping files and will overwrite them if both flags present.
 -w          Workspace directory path for processing. Set a local directory for faster transcoding over network.
