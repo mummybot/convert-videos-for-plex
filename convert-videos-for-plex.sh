@@ -111,7 +111,7 @@ if [[ $workspace != "" && $workspace != */ ]]; then
     workspace=$workspace"/"
 fi
 
-for i in $path{,**/}*.*; do
+for i in "${path}"{,**/}*.*; do
     forceOverwrite=false
 
     # Prevent processing on non-files
@@ -165,13 +165,14 @@ for i in $path{,**/}*.*; do
                         $fileIn=$i
                         $fileOut="${name}"
                     else
+                        echo "Copying "$i" to "$workspace
                         cp "$i" "${workspace}"
                         fileIn=$workspace${i##*/}
                         fileOut=${fileIn%.*}
                     fi
 
                     # Modified from http://pastebin.com/9JnS23fK
-                    HandBrakeCLI -i "$fileIn" -o "$fileOut""_processing""${ext}" --preset="Universal" -O -N eng --native-dub -s "scan"
+                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="Universal" -O -N eng --native-dub -s "scan"
          
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
@@ -179,7 +180,7 @@ for i in $path{,**/}*.*; do
                     else
                         # Delete original files
                         if [[ $del == true ]]; then
-                            rm -f $i
+                            rm -f "${i}"
                         elif [[ $forceOverwrite == true ]]; then
                             rm -f "${name}""${ext}"
                         fi
@@ -191,7 +192,7 @@ for i in $path{,**/}*.*; do
                         if [[ $workspace != "" ]]; then
                             echo "Copying from workspace ""${fileOut}${ext}"" to ""$(dirname "${name}${ext}")"
                             cp "${fileOut}${ext}" "$(dirname "${name}${ext}")"
-                            rm -f "$fileIn"
+                            rm -f "${fileIn}"
                             rm -f "${fileOut}""${ext}"
                         fi
                         echo -e "${GREEN}Transcoded:${NC} "$name$ext
