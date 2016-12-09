@@ -71,5 +71,5 @@ This is an automated script for modifying your home movie collection. Please be 
 
 ## Credit
 
-Stole the core of HandBracke CLI usage from http://pastebin.com/9JnS23fK.
+Stole the core of HandBrake CLI usage from http://pastebin.com/9JnS23fK.
 
