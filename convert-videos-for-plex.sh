@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/local/bin/bash
+
+shopt -s globstar
 
 # Initialise variables
 function showHelp() {
@@ -125,8 +127,8 @@ for i in "${path}"{,**/}*.*; do
     # Prevent processing on non-files
     if [[ $i !=  *\*.* ]]; then
 
-        # Loop over avi, mkv, iso, img and mp4 files only.
-        if [[ $i == *.avi || $i == *.mkv || $i == *.iso || $i == *.img || $i == *.mp4 ]]; then
+        # Loop over avi, mkv, iso, img, mp4 and m4v files only.
+        if [[ $i == *.avi || $i == *.mkv || $i == *.iso || $i == *.img || $i == *.mp4 || $i == *.m4v ]]; then
             ((count++))
             echo
             echo "${count}) Checking: "$i
