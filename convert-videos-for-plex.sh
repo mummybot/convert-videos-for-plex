@@ -133,7 +133,10 @@ for i in "${path}"{,**/}*.*; do
             echo
             echo "${count}) Checking: "$i
 
-            if [[ $(mediainfo --Inform="Video;%Format%" "$i") == *$codec* ]]; then
+            if [[ $(mediainfo --Inform="Video;%Format%" "$i") == *$codec* 
+                || $(mediainfo --Inform="Video;%Format%" "$i") == "AVC" 
+                && $(mediainfo --Inform="Video;%Format_Profile%" "$i") == "High@L5"
+                ]]; then
                 # Get file name minus extension
                 name=${i%.*}
 
