@@ -126,7 +126,6 @@ for i in "${path}"{,**/}*.*; do
 
     # Prevent processing on non-files
     if [[ $i !=  *\*.* ]]; then
-
         # Loop over avi, mkv, iso, img, mp4 and m4v files only.
         if [[ $i == *.avi || $i == *.mkv || $i == *.iso || $i == *.img || $i == *.mp4 || $i == *.m4v ]]; then
             ((count++))
@@ -134,8 +133,9 @@ for i in "${path}"{,**/}*.*; do
             echo "${count}) Checking: "$i
 
             if [[ $(mediainfo --Inform="Video;%Format%" "$i") == *$codec* 
-                || $(mediainfo --Inform="Video;%Format%" "$i") == "AVC" 
-                && $(mediainfo --Inform="Video;%Format_Profile%" "$i") == "High@L5"
+                || $(mediainfo --Inform="Video;%Format%" "$i") == "HEVC" 
+                || ($(mediainfo --Inform="Video;%Format%" "$i") == "AVC" 
+                && $(mediainfo --Inform="Video;%Format_Profile%" "$i") == "High@L5")
                 ]]; then
                 # Get file name minus extension
                 name=${i%.*}
