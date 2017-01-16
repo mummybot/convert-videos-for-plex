@@ -121,7 +121,7 @@ if [[ $workspace != "" && $workspace != */ ]]; then
     workspace=$workspace"/"
 fi
 
-for i in "${path}"{,**/}*.*; do
+for i in "${path}"**/*.*; do
     forceOverwrite=false
 
     # Prevent processing on non-files
@@ -175,8 +175,8 @@ for i in "${path}"{,**/}*.*; do
                 if [[ $run == true ]]; then
                     # Set file locations: in situ or separate workspace
                     if [[ $workspace == "" ]]; then
-                        $fileIn=$i
-                        $fileOut="${name}"
+                        fileIn="${i}"
+                        fileOut="${name}"
                     else
                         echo "Copying "$i" to "$workspace
                         cp "$i" "${workspace}"
