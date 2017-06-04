@@ -10,7 +10,7 @@ This library is for batch transcoding an existing bunch of movies with minimal e
 
 ## Prerequisites
 
-Requires [HandBrackCLI](https://handbrake.fr/docs/en/latest/cli/cli-options.html) (for transcoding) and [media-info](https://mediaarea.net/nn/MediaInfo) (for interrogation). Install with [Homebrew](http://brew.sh/).
+Requires [HandBrakeCLI](https://handbrake.fr/docs/en/latest/cli/cli-options.html) (for transcoding) and [media-info](https://mediaarea.net/nn/MediaInfo) (for interrogation). Install with [Homebrew](http://brew.sh/).
 
 ```bash
 $ brew cask install handbrakecli
