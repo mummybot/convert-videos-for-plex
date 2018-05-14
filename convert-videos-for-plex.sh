@@ -187,7 +187,7 @@ for i in "${path}"**/*.*; do
                     fi
 
                     # Modified from http://pastebin.com/9JnS23fK
-                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O -N eng --native-dub -s "scan"
+                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O -s "scan" --audio-lang-list 'und' --all-audio
          
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
