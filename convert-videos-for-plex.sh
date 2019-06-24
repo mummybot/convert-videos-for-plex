@@ -13,7 +13,7 @@ echo
 echo "Prerequisites"
 echo
 echo "Requires HandBrackCLI and media-info."
-echo "    $ brew cask install handbrakecli"
+echo "    $ brew install handbrake"
 echo "    $ brew install media-info"
 echo "This script uses glob patterns, which requires Bash 4+ and globstar enabled"
 echo "    $ bash --version"
@@ -29,10 +29,9 @@ echo "-o          Output folder directory path."
 echo "            Default is the same directory as the input file."
 echo "-p          The directory path of the movies to be tidied."
 echo "            Default is '.', the location of this script."
-echo "-q          Quality of HandBrake encoding preset. Default is 'Normal'."
-echo "            - Normal"
-echo "            - Universal"
-echo "            - High Profile"
+echo "-q          Quality of HandBrake encoding preset. Default is 'Fast 1080p30'."
+echo "            For a full list of presets in CMD line run:"
+echo "            HandBrakeCLI --preset-list"
 echo "            https://handbrake.fr/docs/en/latest/workflow/select-preset.html"
 echo "-r          Run transcoding. Exclude for dry run."
 echo "-s          Skip transcoding if there is already a matching file name in the output destination."
@@ -65,7 +64,7 @@ workspace=""
 fileIn=""
 fileOut=""
 count=0
-qualityPreset="Normal"
+qualityPreset="Fast 1080p30"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -121,7 +120,7 @@ if [[ $workspace != "" && $workspace != */ ]]; then
     workspace=$workspace"/"
 fi
 
-for i in "${path}"**/*.*; do
+for i in "${path}"{,**/}*.*; do
     forceOverwrite=false
 
     # Prevent processing on non-files
