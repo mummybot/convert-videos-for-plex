@@ -135,8 +135,7 @@ for i in "${path}"{,**/}*.*; do
                 || $(mediainfo --Inform="Video;%Format%" "$i") == "HEVC" 
                 || $(mediainfo --Inform="Video;%Format%" "$i") == "xvid" 
                 || ($(mediainfo --Inform="Video;%Format%" "$i") == "AVC" 
-                    && ($(mediainfo --Inform="Video;%Format_Profile%" "$i") == *"@L5"
-                        || $(mediainfo --Inform="Video;%Format_Profile%" "$i") == "High@"*))
+                    && ($(mediainfo --Inform="Video;%Format_Profile%" "$i") == *"@L5"*))
                 ]]; then
                 # Get file name minus extension
                 name=${i%.*}
@@ -216,7 +215,9 @@ for i in "${path}"{,**/}*.*; do
                     echo -e "${GREEN}Transcoded (DRY RUN):${NC} "$name$ext
                 fi
             else
-                echo -e "${RED}Skipping (not ${codec}, will already play in Plex)${NC}"
+                currentFormat=$(mediainfo --Inform="Video;%Format%" "$i")
+                currentProfile=$(mediainfo --Inform="Video;%Format_Profile%" "$i")
+                echo -e "${RED}Skipping (video format ${currentFormat} ${currentProfile} will already play in Plex)${NC}"
             fi
         fi
     fi
