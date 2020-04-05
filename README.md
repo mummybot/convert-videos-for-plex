@@ -17,6 +17,12 @@ $ brew install handbrake
 $ brew install media-info
 ```
 
+Packages are also available on Linux, here's an example using Arch, package names may vary per repo:
+
+```bash
+$ sudo pacman -S handbrake-cli mediainfo
+```
+
 This script uses glob patterns for traversing directories, which requires Bash 4+ and globstar enabled.
 
 ```bash
@@ -29,6 +35,8 @@ $ bash --version
 
 ```bash
 Command line options:
+-a          Select an audio track to use.
+-b          Select a subtitle track to burn in.
 -c          Codec to modify. Default is MPEG-4
 -d          Delete original.
 -f          Force overwriting of files if already exist in output destination.

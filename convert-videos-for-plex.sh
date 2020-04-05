@@ -13,8 +13,8 @@ echo
 echo "Prerequisites"
 echo
 echo "Requires HandBrackCLI and media-info."
-echo "    $ brew install handbrake"
-echo "    $ brew install media-info"
+echo "    $ brew install handbrake (may be handbrake-cli on Linux)"
+echo "    $ brew install media-info (may be mediainfo on Linux)"
 echo "This script uses glob patterns, which requires Bash 4+ and globstar enabled"
 echo "    $ bash --version"
 echo "    Mac https://gist.github.com/reggi/475793ea1846affbcfe8"
@@ -22,6 +22,8 @@ echo
 echo "----------------"
 echo
 echo "Command line options:"
+echo "-a          Select an audio track to use."
+echo "-b          Select a subtitle track to burn in."
 echo "-c          Codec to modify. Default is MPEG-4"
 echo "-d          Delete original."
 echo "-f          Force overwriting of files if already exist in output destination."
@@ -65,13 +67,15 @@ fileIn=""
 fileOut=""
 count=0
 qualityPreset="Fast 1080p30"
+audio=""
+subtitle=""
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-while getopts "h?dfsrp:o:c:w:q:" opt; do
+while getopts "h?dfsrp:o:c:w:q:a:b:" opt; do
     case "$opt" in
     h|\?)
         showHelp
@@ -94,6 +98,10 @@ while getopts "h?dfsrp:o:c:w:q:" opt; do
     w)  workspace="$OPTARG"
         ;;
     q)  qualityPreset="$OPTARG"
+        ;;
+    a)  audio="--audio $OPTARG"
+        ;;
+    b)  subtitle="--subtitle $OPTARG --subtitle-burned"
         ;;
     esac
 done
@@ -131,12 +139,24 @@ for i in "${path}"{,**/}*.*; do
             echo
             echo "${count}) Checking: "$i
 
-            if [[ $(mediainfo --Inform="Video;%Format%" "$i") == *$codec* 
+            if [[ ($audio != "" || $subtitle != "")
+                || $(mediainfo --Inform="Video;%Format%" "$i") == *$codec* 
                 || $(mediainfo --Inform="Video;%Format%" "$i") == "HEVC" 
                 || $(mediainfo --Inform="Video;%Format%" "$i") == "xvid" 
                 || ($(mediainfo --Inform="Video;%Format%" "$i") == "AVC" 
                     && ($(mediainfo --Inform="Video;%Format_Profile%" "$i") == *"@L5"*))
                 ]]; then
+		
+		# Set audio options to defaults if required
+		if [[ $audio == "" ]]; then
+		    audio="--audio-lang-list 'und' --all-audio"
+                fi
+
+                # Set subtitle options to defaults if required
+                if [[ $subtitle == "" ]]; then
+                    subtitle="-s 'scan'"
+                fi
+
                 # Get file name minus extension
                 name=${i%.*}
 
@@ -185,7 +205,7 @@ for i in "${path}"{,**/}*.*; do
                     fi
 
                     # Modified from http://pastebin.com/9JnS23fK
-                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O -s "scan" --audio-lang-list 'und' --all-audio
+                    HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O ${subtitle} ${audio}
          
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
