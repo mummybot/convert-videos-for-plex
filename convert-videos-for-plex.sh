@@ -151,9 +151,9 @@ for i in "${path}"{,**/}*.*; do
                     && ($(mediainfo --Inform="Video;%Format_Profile%" "$i") == *"@L5"*))
                 ]]; then
 		
-		# Set audio options to defaults if required
-		if [[ $audio == "" ]]; then
-		    audio="--audio-lang-list 'und' --all-audio"
+                # Set audio options to defaults if required
+                if [[ $audio == "" ]]; then
+                    audio="--audio-lang-list 'und' --all-audio"
                 fi
 
                 # Set subtitle options to defaults if required
