@@ -197,6 +197,17 @@ for i in "${path}"{,**/}*.*; do
                 echo "Transcoding: "${i} to $name$ext
 
                 if [[ $run == true ]]; then
+                    
+                    lockPath="${i}.lock"
+                    
+                    if [[ -f "${lockPath}" ]]; then
+                        echo "${RED}Lockfile for $i exists. Skipping.${NC}"
+                        continue
+                    fi
+                    
+                    # Places a temporary lock on the file so another machine won't duplicate effort
+                    touch "${lockPath}"
+                    
                     # Set file locations: in situ or separate workspace
                     if [[ $workspace == "" ]]; then
                         fileIn="${i}"
@@ -208,21 +219,11 @@ for i in "${path}"{,**/}*.*; do
                         fileOut=${fileIn%.*}
                     fi
 
-                    # Places a temporary lock on the file so another machine won't duplicate effort
-                    lockPath="${i}.lock"
-
-                    if [[ -f "$lockPath" ]]; then
-                        echo "${RED}Lockfile for $i exists. Skipping.${NC}"
-                        continue
-                    fi
-
-                    touch $lockPath
-
                     # Modified from http://pastebin.com/9JnS23fK
                     HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O ${subtitle} ${audio}
                     
                     # Remove the temporary lock to tidy up after ourself.
-                    rm $lockPath
+                    rm "${lockPath}"
 
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
