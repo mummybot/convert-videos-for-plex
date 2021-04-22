@@ -80,8 +80,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 function removeLock {
-    if [[ -f "${1}" ]]; then
-        rm "${$1}"
+    if [[ -f "$1" ]]; then
+        rm "$1"
     fi
 }
 
