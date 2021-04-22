@@ -140,6 +140,14 @@ for i in "${path}"{,**/}*.*; do
         # Loop over avi, mkv, iso, img, mp4 and m4v files only.
         if [[ $i == *.avi || $i == *.mkv || $i == *.iso || $i == *.img || $i == *.mp4 || $i == *.m4v ]]; then
             ((count++))
+
+            lockPath="${i}.lock"
+                    
+            if [[ -f "${lockPath}" ]]; then
+                echo "${RED}Lockfile for $i exists. Skipping.${NC}"
+                continue
+            fi
+            
             echo
             echo "${count}) Checking: "$i
 
@@ -197,13 +205,6 @@ for i in "${path}"{,**/}*.*; do
                 echo "Transcoding: "${i} to $name$ext
 
                 if [[ $run == true ]]; then
-                    
-                    lockPath="${i}.lock"
-                    
-                    if [[ -f "${lockPath}" ]]; then
-                        echo "${RED}Lockfile for $i exists. Skipping.${NC}"
-                        continue
-                    fi
                     
                     # Places a temporary lock on the file so another machine won't duplicate effort
                     touch "${lockPath}"
