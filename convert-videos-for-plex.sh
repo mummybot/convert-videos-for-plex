@@ -79,6 +79,12 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+function removeLock {
+    if [[ -f "${1}" ]]; then
+        rm "${$1}"
+    fi
+}
+
 while getopts "h?dfsrp:o:c:w:q:a:b:" opt; do
     case "$opt" in
     h|\?)
@@ -144,12 +150,13 @@ for i in "${path}"{,**/}*.*; do
             lockPath="${i}.lock"
                     
             if [[ -f "${lockPath}" ]]; then
-                echo "${RED}Lockfile for $i exists. Skipping.${NC}"
+                echo -e "${BLUE}Lockfile for $i exists. Skipping.${NC}"
                 continue
             fi
-
-            # Places a temporary lock on the file so another machine won't duplicate effort
-            touch "${lockPath}"
+            
+            if [[ $run == true ]]; then
+                touch "${lockPath}"
+            fi
 
             echo
             echo "${count}) Checking: "$i
@@ -193,15 +200,12 @@ for i in "${path}"{,**/}*.*; do
                                 echo -e "${BLUE}Overwriting:${NC} "$name$ext
                             else
                                 echo -e "${RED}Skipping (already exists):${NC} "$name$ext
-                                # Remove the temporary lock to tidy up after ourself.
-                                rm "${lockPath}"
+                                removeLock "${lockPath}"
                                 continue
                             fi
                         else
                             echo -e "${RED}Skipping (already exists):${NC} "$name$ext
-                            
-                            # Remove the temporary lock to tidy up after ourself.
-                            rm "${lockPath}"
+                            removeLock "${lockPath}"
                             continue
                         fi
                     else
@@ -230,8 +234,7 @@ for i in "${path}"{,**/}*.*; do
 
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
-                        # Remove the temporary lock to tidy up after ourself.
-                        rm "${lockPath}"
+                        removeLock "${lockPath}"
                         continue
                     else
                         # Delete original files
@@ -263,8 +266,7 @@ for i in "${path}"{,**/}*.*; do
                 echo -e "${RED}Skipping (video format ${currentFormat} ${currentProfile} will already play in Plex)${NC}"
             fi
 
-            # Remove the temporary lock to tidy up after ourself.
-            rm "${lockPath}"
+            removeLock "${lockPath}"
         fi
     fi
 done

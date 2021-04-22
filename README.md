@@ -51,17 +51,22 @@ Command line options:
 -r          Run transcoding. Exclude for dry run.
 -s          Skip transcoding if there is already a matching file name in the output destination.
             Force takes precedence over skipping files and will overwrite them if both flags present.
+            This is recommended when running multiple machines on the same shared directory.
 -w          Workspace directory path for processing. Set a local directory for faster transcoding over network.
 
 Examples:
     Dry run all movies in the Movies directory
-        .convert-videos-for-plex.sh -p Movies
+   
+    `.convert-videos-for-plex.sh -p Movies`
 
     Transcode all movies in the current directory force overwriting matching .mp4 files.
         .convert-videos-for-plex.sh -fr
 
     Transcode all network movies using Desktop as temp directory and delete original files.
         .convert-videos-for-plex.sh -rd -p /Volumes/Public/Movies -w ~/Desktop
+
+    Transcode all network movies from multiple machines (note the 's' parameter).
+        .convert-videos-for-plex.sh -rds -p /Volumes/Public/Movies -w ~/Desktop
 ```
 
 ## Things to consider
@@ -73,6 +78,22 @@ Examples:
 * **Changes are permanent.** Beware using the delete flag ```-d```, you cannot get the original films back once you delete them.
 * **Files may fail.** I have found that sometimes the Handbrake CLI fails to transcode the entire movie: ```incomplete frame```, ```Header missing```, ```marker does not match f_code```. The total playable length may end up shorter and file size signifcantly lower. This will be due to a less than ideal file (maybe slightly corrupted) but most video players can compensate so it is not obviously noticable when watching. After running on a folder, I use the ```tree -h``` command (```brew install tree```) to output file names and size, then do a manual compare in excel to alert me to any files which seem erroneous. Using the [HandBrake GUI](https://handbrake.fr/) application appears to work around many of the issues, otherwise you may need to try another converter e.g. [ffmpeg](https://trac.ffmpeg.org/wiki/CompilationGuide/MacOSX). *If someone asks, I could add a before/after file size comaprison with percentage tolerance and option to alert or not perform transformation. However currently I don't need it.*
 * **Handbrake can lock files.** Sometimes Handbrake doesn't end properly; the process will lock the original file so the script can't delete it. You will need to unlock these files (context menu > info > click lock icon) to delete them manually.
+
+## Running multiple machines
+
+So. You've got yourself a few computers lying around. Good for you. Now - time to put that distributed CPU power to good use!
+
+This setup is especially effective on shared NAS drives, where video files can be accessed from multiple devices at once.
+
+To avoid multiple machines stepping on each other's toes, a `.lock` file is created to let other computers know that the given file is already been looked at. When the script is iterating over the files, it will first check if a `.lock` file exists. If it does find one, it will move over to the next file. As soon as it starts analysing the file, it creates the lock file. At the point that the script is complete, it will remove the lock file and move on.
+
+With this process, multiple machines can be working on the same directory, leapfrogging over each other to get the job done faster.
+
+#### Caveats
+
+- **If you don't** enable either `skip (-s)` or `force(-f)`, you will most likely be prompted about existing files, effectively halting the task.
+- If you stop a process early, the `.lock` file may not be removed. To start the process again, you will need to manually delete the file.
+- If using on a NAS drive, accessing files from multiple sources may cause read and write speeds to suffer.
 
 ## Disclaimer
 
