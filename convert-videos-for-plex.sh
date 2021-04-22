@@ -1,6 +1,6 @@
 #!/bin/bash
 
-shopt -s globstar
+# shopt -s globstar
 
 # Initialise variables
 function showHelp() {
@@ -208,9 +208,21 @@ for i in "${path}"{,**/}*.*; do
                         fileOut=${fileIn%.*}
                     fi
 
+                    lockPath="${i}.lock"
+                    echo ${lockPath}
+
+                    if [[ -f "$lockPath" ]]; then
+                        echo "${RED}Lockfile for $i exists. Skipping.${NC}"
+                        continue
+                    fi
+
+                    touch $lockPath
+
                     # Modified from http://pastebin.com/9JnS23fK
                     HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O ${subtitle} ${audio}
-         
+                    
+                    rm $lockPath
+
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
                         continue
