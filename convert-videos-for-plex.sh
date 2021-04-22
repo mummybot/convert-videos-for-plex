@@ -147,7 +147,10 @@ for i in "${path}"{,**/}*.*; do
                 echo "${RED}Lockfile for $i exists. Skipping.${NC}"
                 continue
             fi
-            
+
+            # Places a temporary lock on the file so another machine won't duplicate effort
+            touch "${lockPath}"
+
             echo
             echo "${count}) Checking: "$i
 
@@ -190,10 +193,15 @@ for i in "${path}"{,**/}*.*; do
                                 echo -e "${BLUE}Overwriting:${NC} "$name$ext
                             else
                                 echo -e "${RED}Skipping (already exists):${NC} "$name$ext
+                                # Remove the temporary lock to tidy up after ourself.
+                                rm "${lockPath}"
                                 continue
                             fi
                         else
                             echo -e "${RED}Skipping (already exists):${NC} "$name$ext
+                            
+                            # Remove the temporary lock to tidy up after ourself.
+                            rm "${lockPath}"
                             continue
                         fi
                     else
@@ -205,9 +213,6 @@ for i in "${path}"{,**/}*.*; do
                 echo "Transcoding: "${i} to $name$ext
 
                 if [[ $run == true ]]; then
-                    
-                    # Places a temporary lock on the file so another machine won't duplicate effort
-                    touch "${lockPath}"
                     
                     # Set file locations: in situ or separate workspace
                     if [[ $workspace == "" ]]; then
@@ -222,12 +227,11 @@ for i in "${path}"{,**/}*.*; do
 
                     # Modified from http://pastebin.com/9JnS23fK
                     HandBrakeCLI -i "${fileIn}" -o "${fileOut}""_processing""${ext}" --preset="${qualityPreset}" -O ${subtitle} ${audio}
-                    
-                    # Remove the temporary lock to tidy up after ourself.
-                    rm "${lockPath}"
 
                     # if HandBrake did not exit gracefully, continue with next iteration
                     if [[ $? -ne 0 ]]; then
+                        # Remove the temporary lock to tidy up after ourself.
+                        rm "${lockPath}"
                         continue
                     else
                         # Delete original files
@@ -258,6 +262,9 @@ for i in "${path}"{,**/}*.*; do
                 currentProfile=$(mediainfo --Inform="Video;%Format_Profile%" "$i")
                 echo -e "${RED}Skipping (video format ${currentFormat} ${currentProfile} will already play in Plex)${NC}"
             fi
+
+            # Remove the temporary lock to tidy up after ourself.
+            rm "${lockPath}"
         fi
     fi
 done
