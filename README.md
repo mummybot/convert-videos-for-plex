@@ -51,22 +51,17 @@ Command line options:
 -r          Run transcoding. Exclude for dry run.
 -s          Skip transcoding if there is already a matching file name in the output destination.
             Force takes precedence over skipping files and will overwrite them if both flags present.
-            This is recommended when running multiple machines on the same shared directory.
 -w          Workspace directory path for processing. Set a local directory for faster transcoding over network.
 
 Examples:
     Dry run all movies in the Movies directory
-   
-    `.convert-videos-for-plex.sh -p Movies`
+        .convert-videos-for-plex.sh -p Movies
 
     Transcode all movies in the current directory force overwriting matching .mp4 files.
         .convert-videos-for-plex.sh -fr
 
     Transcode all network movies using Desktop as temp directory and delete original files.
         .convert-videos-for-plex.sh -rd -p /Volumes/Public/Movies -w ~/Desktop
-
-    Transcode all network movies from multiple machines (note the 's' parameter).
-        .convert-videos-for-plex.sh -rds -p /Volumes/Public/Movies -w ~/Desktop
 ```
 
 ## Things to consider
@@ -90,8 +85,6 @@ To avoid multiple machines stepping on each other's toes, a `.lock` file is crea
 With this process, multiple machines can be working on the same directory, leapfrogging over each other to get the job done faster.
 
 #### Caveats
-
-- **If you don't** enable either `skip (-s)` or `force(-f)`, you will most likely be prompted about existing files, effectively halting the task.
 - If you stop a process early, the `.lock` file may not be removed. To start the process again, you will need to manually delete the file.
 - If using on a NAS drive, accessing files from multiple sources may cause read and write speeds to suffer.
 
